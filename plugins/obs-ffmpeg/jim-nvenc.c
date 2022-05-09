@@ -3,12 +3,14 @@
 #include <util/darray.h>
 #include <util/dstr.h>
 #include <obs-avc.h>
-#include <obs-hevc.h>
 #include <libavutil/rational.h>
 #define INITGUID
 #include <dxgi.h>
 #include <d3d11.h>
 #include <d3d11_1.h>
+#ifdef ENABLE_HEVC
+#include <obs-hevc.h>
+#endif
 
 /* ========================================================================= */
 
@@ -364,6 +366,13 @@ static bool init_encoder_h264(struct nvenc_data *enc, obs_data_t *settings,
 	bool vbr = astrcmpi(rc, "VBR") == 0;
 	NVENCSTATUS err;
 
+	const int bf_max = nv_get_cap_h264(enc, NV_ENC_CAPS_NUM_MAX_BFRAMES);
+	if (bf > bf_max) {
+		error("Max B-frames setting (%d) is more than GPU supports (%d)",
+		      bf, bf_max);
+		return false;
+	}
+
 	video_t *video = obs_encoder_video(enc->encoder);
 	const struct video_output_info *voi = video_output_get_info(video);
 
@@ -636,6 +645,13 @@ static bool init_encoder_hevc(struct nvenc_data *enc, obs_data_t *settings,
 	int bf = (int)obs_data_get_int(settings, "bf");
 	bool vbr = astrcmpi(rc, "VBR") == 0;
 	NVENCSTATUS err;
+
+	const int bf_max = nv_get_cap_hevc(enc, NV_ENC_CAPS_NUM_MAX_BFRAMES);
+	if (bf > bf_max) {
+		error("Max B-frames setting (%d) is more than GPU supports (%d)",
+		      bf, bf_max);
+		return false;
+	}
 
 	video_t *video = obs_encoder_video(enc->encoder);
 	const struct video_output_info *voi = video_output_get_info(video);
