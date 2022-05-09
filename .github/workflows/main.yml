@@ -8,6 +8,7 @@ env:
   VLC_VERSION_WIN: '3.0.0-git'
   CEF_BUILD_VERSION_WIN: '4638'
   CMAKE_GENERATOR: 'Visual Studio 17 2022'
+  VIRTUALCAM-GUID: '1B4706D6-9902-454A-8345-32F305BCFD28'
 jobs:
   build:
     runs-on: windows-2022
