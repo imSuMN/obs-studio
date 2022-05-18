@@ -54,18 +54,25 @@ jobs:
           name: win-x64
       - name: 'Unpack artifacts'
         run: |
-          New-Item -ItemType Directory -Name install_temp
-          Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x86.zip') -DestinationPath install_temp
-          Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x64.zip') -DestinationPath install_temp -Force
+          Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x86.zip') -DestinationPath x86
+          Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x64.zip') -DestinationPath x64
       - name: 'Repack artifacts'
         run: |
-      - name: 'Find artifacts'
-        id: findArtifacts
-        run: |
-          $ArtifactName = (Get-ChildItem -Filter 'OBS-Studio-*-Win-${{matrix.arch}}.zip')
-          Write-Output "::set-output name=artifactName::$ArtifactName"
-      - name: 'Upload artifacts'
+          Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.dll' -Destination '.\x64\data\obs-plugins\win-dshow'
+          If (Test-Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb') {
+            Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb' -Destination '.\x64\data\obs-plugins\win-dshow'
+          }
+          Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.dll' -Destination '.\x86\data\obs-plugins\win-dshow'
+          If (Test-Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb') {
+            Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb' -Destination '.\x86\data\obs-plugins\win-dshow'
+          }
+      - name: 'Upload x86 artifacts'
         uses: actions/upload-artifact@v3
         with:
-          name: win-virtualcam
-          path: ${{steps.findArtifacts.outputs.artifactName}}
+          name: win-x86-virtualcam
+          path: x86
+      - name: 'Upload x64 artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: win-x64-virtualcam
+          path: x64
