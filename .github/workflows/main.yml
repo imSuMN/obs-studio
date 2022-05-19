@@ -11,23 +11,68 @@ env:
   VIRTUALCAM-GUID: '1B4706D6-9902-454A-8345-32F305BCFD28'
 jobs:
   build:
+    name: Build
     runs-on: windows-2022
+    defaults:
+      run:
+        working-directory: obs-studio
+    strategy:
+      matrix:
+        arch: [x86, x64]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
+          path: obs-studio
           fetch-depth: 0
           submodules: recursive
       - name: Build
-        run: CI/build-windows.ps1 -CombinedArchs -Package
-      - name: Find artifacts
-        id: artifactName
         run: |
-          $ArtifactName = Get-ChildItem -Filter 'OBS-Studio-*-Win-x86+x64.zip' -File
-          Write-Output "::set-output name=artifactName::${ArtifactName}"
-      - name: Upload artifacts
+          CI/build-windows.ps1 -BuildArch ${{matrix.arch}} -Package
+      - name: 'Find artifacts'
+        id: findArtifacts
+        run: |
+          $ArtifactName = (Get-ChildItem -Filter 'OBS-Studio-*-Win-${{matrix.arch}}.zip')
+          Write-Output "::set-output name=artifactName::$ArtifactName"
+      - name: 'Upload artifacts'
         uses: actions/upload-artifact@v3
         with:
-          name: obs-win
-          path: ${{ steps.artifactName.outputs.artifactName }}
-      
+          name: 'win-${{matrix.arch}}'
+          path: ${{steps.findArtifacts.outputs.artifactName}}
+  package:
+    name: Package
+    runs-on: windows-2022
+    needs: build
+    steps:
+      - name: 'Download 32-bit artifacts'
+        uses: actions/download-artifact@v3
+        with:
+          name: win-x86
+      - name: 'Download 64-bit artifacts'
+        uses: actions/download-artifact@v3
+        with:
+          name: win-x64
+      - name: 'Unpack artifacts'
+        run: |
+          Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x86.zip') -DestinationPath x86
+          Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x64.zip') -DestinationPath x64
+      - name: 'Repack artifacts'
+        run: |
+          Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.dll' -Destination '.\x64\data\obs-plugins\win-dshow'
+          If (Test-Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb') {
+            Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb' -Destination '.\x64\data\obs-plugins\win-dshow'
+          }
+          Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.dll' -Destination '.\x86\data\obs-plugins\win-dshow'
+          If (Test-Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb') {
+            Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb' -Destination '.\x86\data\obs-plugins\win-dshow'
+          }
+      - name: 'Upload 32-bit artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: win-x86-virtualcam
+          path: x86
+      - name: 'Upload 64-bit artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: win-x64-virtualcam
+          path: x64
