@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [ping-main, Soundwave/dev]
+    branches: ping-main
 # Environment variables must be single quote delimitted; other scripts read out of this file (very cursed) and expect it.
 env:
   DEPS_VERSION_WIN: '2022-03-16'
@@ -44,11 +44,11 @@ jobs:
     runs-on: windows-2022
     needs: build
     steps:
-      - name: 'Download 32-bit artifact'
+      - name: 'Download 32-bit artifacts'
         uses: actions/download-artifact@v3
         with:
           name: win-x86
-      - name: 'Download 64-bit artifact'
+      - name: 'Download 64-bit artifacts'
         uses: actions/download-artifact@v3
         with:
           name: win-x64
@@ -66,12 +66,12 @@ jobs:
           If (Test-Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb') {
             Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb' -Destination '.\x86\data\obs-plugins\win-dshow'
           }
-      - name: 'Upload x86 artifacts'
+      - name: 'Upload 32-bit artifacts'
         uses: actions/upload-artifact@v3
         with:
           name: win-x86-virtualcam
           path: x86
-      - name: 'Upload x64 artifacts'
+      - name: 'Upload 64-bit artifacts'
         uses: actions/upload-artifact@v3
         with:
           name: win-x64-virtualcam
