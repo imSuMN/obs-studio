@@ -1560,12 +1560,8 @@ enum convert_type {
 	CONVERT_800,
 	CONVERT_RGB_LIMITED,
 	CONVERT_BGR3,
-	CONVERT_I010_SRGB,
-	CONVERT_I010_PQ_2020_709,
-	CONVERT_I010_HLG_2020_709,
-	CONVERT_P010_SRGB,
-	CONVERT_P010_PQ_2020_709,
-	CONVERT_P010_HLG_2020_709,
+	CONVERT_I010,
+	CONVERT_P010,
 };
 
 static inline enum convert_type get_convert_type(enum video_format format,
@@ -1617,27 +1613,11 @@ static inline enum convert_type get_convert_type(enum video_format format,
 	case VIDEO_FORMAT_AYUV:
 		return CONVERT_444_A_PACK;
 
-	case VIDEO_FORMAT_I010: {
-		switch (trc) {
-		case VIDEO_TRC_SRGB:
-			return CONVERT_I010_SRGB;
-		case VIDEO_TRC_HLG:
-			return CONVERT_I010_HLG_2020_709;
-		default:
-			return CONVERT_I010_PQ_2020_709;
-		}
-	}
+	case VIDEO_FORMAT_I010:
+		return CONVERT_I010;
 
-	case VIDEO_FORMAT_P010: {
-		switch (trc) {
-		case VIDEO_TRC_SRGB:
-			return CONVERT_P010_SRGB;
-		case VIDEO_TRC_HLG:
-			return CONVERT_P010_HLG_2020_709;
-		default:
-			return CONVERT_P010_PQ_2020_709;
-		}
-	}
+	case VIDEO_FORMAT_P010:
+		return CONVERT_P010;
 	}
 
 	return CONVERT_NONE;
@@ -1979,14 +1959,10 @@ static inline bool init_gpu_conversion(struct obs_source *source,
 	case CONVERT_444_A_PACK:
 		return set_packed444_alpha_sizes(source, frame);
 
-	case CONVERT_I010_SRGB:
-	case CONVERT_I010_PQ_2020_709:
-	case CONVERT_I010_HLG_2020_709:
+	case CONVERT_I010:
 		return set_i010_sizes(source, frame);
 
-	case CONVERT_P010_SRGB:
-	case CONVERT_P010_PQ_2020_709:
-	case CONVERT_P010_HLG_2020_709:
+	case CONVERT_P010:
 		return set_p010_sizes(source, frame);
 
 	case CONVERT_NONE:
@@ -2079,12 +2055,8 @@ static void upload_raw_frame(gs_texture_t *tex[MAX_AV_PLANES],
 	case CONVERT_444_A:
 	case CONVERT_444P12LE_A:
 	case CONVERT_444_A_PACK:
-	case CONVERT_I010_SRGB:
-	case CONVERT_I010_PQ_2020_709:
-	case CONVERT_I010_HLG_2020_709:
-	case CONVERT_P010_SRGB:
-	case CONVERT_P010_PQ_2020_709:
-	case CONVERT_P010_HLG_2020_709:
+	case CONVERT_I010:
+	case CONVERT_P010:
 		for (size_t c = 0; c < MAX_AV_PLANES; c++) {
 			if (tex[c])
 				gs_texture_set_image(tex[c], frame->data[c],
@@ -2153,23 +2125,23 @@ static const char *select_conversion_technique(enum video_format format,
 
 	case VIDEO_FORMAT_I010: {
 		switch (trc) {
-		case VIDEO_TRC_SRGB:
-			return "I010_SRGB_Reverse";
+		case VIDEO_TRC_PQ:
+			return "I010_PQ_2020_709_Reverse";
 		case VIDEO_TRC_HLG:
 			return "I010_HLG_2020_709_Reverse";
 		default:
-			return "I010_PQ_2020_709_Reverse";
+			return "I010_SRGB_Reverse";
 		}
 	}
 
 	case VIDEO_FORMAT_P010: {
 		switch (trc) {
-		case VIDEO_TRC_SRGB:
-			return "P010_SRGB_Reverse";
+		case VIDEO_TRC_PQ:
+			return "P010_PQ_2020_709_Reverse";
 		case VIDEO_TRC_HLG:
 			return "P010_HLG_2020_709_Reverse";
 		default:
-			return "P010_PQ_2020_709_Reverse";
+			return "P010_SRGB_Reverse";
 		}
 	}
 
@@ -2258,17 +2230,18 @@ static bool update_async_texrender(struct obs_source *source,
 		set_eparam(conv, "height_d2", (float)cy * 0.5f);
 		set_eparam(conv, "width_x2_i", 0.5f / (float)cx);
 
-		const float hdr_nominal_peak_level =
-			obs->video.hdr_nominal_peak_level;
+		/* BT.2408 says higher than 1000 isn't comfortable */
+		float hlg_peak_level = obs->video.hdr_nominal_peak_level;
+		if (hlg_peak_level > 1000.f)
+			hlg_peak_level = 1000.f;
+
 		const float maximum_nits = (frame->trc == VIDEO_TRC_HLG)
-						   ? hdr_nominal_peak_level
+						   ? hlg_peak_level
 						   : 10000.f;
 		set_eparam(conv, "maximum_over_sdr_white_nits",
 			   maximum_nits / obs_get_video_sdr_white_level());
-		const float hlg_gamma =
-			1.2f +
-			(0.42f * log10f(hdr_nominal_peak_level / 1000.f));
-		const float hlg_exponent = hlg_gamma - 1.f;
+		const float hlg_exponent =
+			0.2f + (0.42f * log10f(hlg_peak_level / 1000.f));
 		set_eparam(conv, "hlg_exponent", hlg_exponent);
 
 		struct vec4 vec0, vec1, vec2;

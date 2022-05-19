@@ -593,6 +593,11 @@ EXPORT uint8_t *gs_create_texture_file_data(const char *file,
 EXPORT uint8_t *gs_create_texture_file_data2(
 	const char *file, enum gs_image_alpha_mode alpha_mode,
 	enum gs_color_format *format, uint32_t *cx, uint32_t *cy);
+EXPORT uint8_t *
+gs_create_texture_file_data3(const char *file,
+			     enum gs_image_alpha_mode alpha_mode,
+			     enum gs_color_format *format, uint32_t *cx,
+			     uint32_t *cy, enum gs_color_space *space);
 
 #define GS_FLIP_U (1 << 0)
 #define GS_FLIP_V (1 << 1)
@@ -981,6 +986,11 @@ EXPORT bool gs_query_dmabuf_capabilities(enum gs_dmabuf_flags *dmabuf_flags,
 EXPORT bool gs_query_dmabuf_modifiers_for_format(uint32_t drm_format,
 						 uint64_t **modifiers,
 						 size_t *n_modifiers);
+
+EXPORT gs_texture_t *
+gs_texture_create_from_pixmap(uint32_t width, uint32_t height,
+			      enum gs_color_format color_format,
+			      uint32_t target, void *pixmap);
 
 #endif
 
