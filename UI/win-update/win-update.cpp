@@ -354,7 +354,7 @@ try {
 	vector<string> extraHeaders;
 
 	BPtr<char> updateFilePath =
-		GetConfigPathPtr("obs-studio\\updates\\updater.exe");
+		GetConfigPathPtr("ping-studio\\updates\\updater.exe");
 
 	if (CalculateFileHash(updateFilePath, updateFileHash)) {
 		char hashString[BLAKE2_HASH_STR_LENGTH];
@@ -532,7 +532,7 @@ try {
 	} finishedTrigger;
 
 	BPtr<char> manifestPath =
-		GetConfigPathPtr("obs-studio\\updates\\manifest.json");
+		GetConfigPathPtr("ping-studio\\updates\\manifest.json");
 
 	/* ----------------------------------- *
 	 * create signature provider           */
@@ -668,7 +668,7 @@ try {
 	 * execute updater                     */
 
 	BPtr<char> updateFilePath =
-		GetConfigPathPtr("obs-studio\\updates\\updater.exe");
+		GetConfigPathPtr("ping-studio\\updates\\updater.exe");
 	BPtr<wchar_t> wUpdateFilePath;
 
 	size_t size = os_utf8_to_wcs_ptr(updateFilePath, 0, &wUpdateFilePath);
@@ -727,7 +727,7 @@ try {
 	bool success;
 
 	BPtr<char> whatsnewPath =
-		GetConfigPathPtr("obs-studio\\updates\\whatsnew.json");
+		GetConfigPathPtr("ping-studio\\updates\\whatsnew.json");
 
 	/* ----------------------------------- *
 	 * create signature provider           */

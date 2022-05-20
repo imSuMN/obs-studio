@@ -159,10 +159,10 @@ static void AddExtraModulePaths()
 	char base_module_dir[512];
 #if defined(_WIN32) || defined(__APPLE__)
 	int ret = GetProgramDataPath(base_module_dir, sizeof(base_module_dir),
-				     "obs-studio/plugins/%module%");
+				     "ping-studio/plugins/%module%");
 #else
 	int ret = GetConfigPath(base_module_dir, sizeof(base_module_dir),
-				"obs-studio/plugins/%module%");
+				"ping-studio/plugins/%module%");
 #endif
 
 	if (ret <= 0)
@@ -176,9 +176,9 @@ static void AddExtraModulePaths()
 
 	/* User Application Support Search Path */
 	BPtr<char> config_bin = os_get_config_path_ptr(
-		"obs-studio/plugins/%module%.plugin/Contents/MacOS");
+		"ping-studio/plugins/%module%.plugin/Contents/MacOS");
 	BPtr<char> config_data = os_get_config_path_ptr(
-		"obs-studio/plugins/%module%.plugin/Contents/Resources");
+		"ping-studio/plugins/%module%.plugin/Contents/Resources");
 	obs_add_module_path(config_bin, config_data);
 
 	/* Legacy System Library Search Path */
@@ -186,9 +186,9 @@ static void AddExtraModulePaths()
 
 	/* Legacy User Application Support Search Path */
 	BPtr<char> config_bin_legacy =
-		os_get_config_path_ptr("obs-studio/plugins/%module%/bin");
+		os_get_config_path_ptr("ping-studio/plugins/%module%/bin");
 	BPtr<char> config_data_legacy =
-		os_get_config_path_ptr("obs-studio/plugins/%module%/data");
+		os_get_config_path_ptr("ping-studio/plugins/%module%/data");
 	obs_add_module_path(config_bin_legacy, config_data_legacy);
 #else
 #if ARCH_BITS == 64
@@ -1744,7 +1744,7 @@ void OBSBasic::OBSInit()
 		throw "Failed to get scene collection name";
 
 	ret = snprintf(fileName, sizeof(fileName),
-		       "obs-studio/basic/scenes/%s.json", sceneCollection);
+		       "ping-studio/basic/scenes/%s.json", sceneCollection);
 	if (ret <= 0)
 		throw "Failed to create scene collection file name";
 
@@ -2753,7 +2753,7 @@ void OBSBasic::SaveProjectDeferred()
 		return;
 
 	ret = snprintf(fileName, sizeof(fileName),
-		       "obs-studio/basic/scenes/%s.json", sceneCollection);
+		       "ping-studio/basic/scenes/%s.json", sceneCollection);
 	if (ret <= 0)
 		return;
 
@@ -6122,7 +6122,7 @@ void OBSBasic::UploadLog(const char *subdir, const char *file, const bool crash)
 void OBSBasic::on_actionShowLogs_triggered()
 {
 	char logDir[512];
-	if (GetConfigPath(logDir, sizeof(logDir), "obs-studio/logs") <= 0)
+	if (GetConfigPath(logDir, sizeof(logDir), "ping-studio/logs") <= 0)
 		return;
 
 	QUrl url = QUrl::fromLocalFile(QT_UTF8(logDir));
@@ -6131,12 +6131,12 @@ void OBSBasic::on_actionShowLogs_triggered()
 
 void OBSBasic::on_actionUploadCurrentLog_triggered()
 {
-	UploadLog("obs-studio/logs", App()->GetCurrentLog(), false);
+	UploadLog("ping-studio/logs", App()->GetCurrentLog(), false);
 }
 
 void OBSBasic::on_actionUploadLastLog_triggered()
 {
-	UploadLog("obs-studio/logs", App()->GetLastLog(), false);
+	UploadLog("ping-studio/logs", App()->GetLastLog(), false);
 }
 
 void OBSBasic::on_actionViewCurrentLog_triggered()
@@ -6155,7 +6155,7 @@ void OBSBasic::on_actionViewCurrentLog_triggered()
 void OBSBasic::on_actionShowCrashLogs_triggered()
 {
 	char logDir[512];
-	if (GetConfigPath(logDir, sizeof(logDir), "obs-studio/crashes") <= 0)
+	if (GetConfigPath(logDir, sizeof(logDir), "ping-studio/crashes") <= 0)
 		return;
 
 	QUrl url = QUrl::fromLocalFile(QT_UTF8(logDir));
@@ -6164,7 +6164,7 @@ void OBSBasic::on_actionShowCrashLogs_triggered()
 
 void OBSBasic::on_actionUploadLastCrashLog_triggered()
 {
-	UploadLog("obs-studio/crashes", App()->GetLastCrashLog(), true);
+	UploadLog("ping-studio/crashes", App()->GetLastCrashLog(), true);
 }
 
 void OBSBasic::on_actionCheckForUpdates_triggered()
@@ -7700,7 +7700,7 @@ void OBSBasic::on_actionDiscord_triggered()
 void OBSBasic::on_actionShowSettingsFolder_triggered()
 {
 	char path[512];
-	int ret = GetConfigPath(path, 512, "obs-studio");
+	int ret = GetConfigPath(path, 512, "ping-studio");
 	if (ret <= 0)
 		return;
 
@@ -8795,7 +8795,7 @@ int OBSBasic::GetProfilePath(char *path, size_t size, const char *file) const
 	if (!file)
 		file = "";
 
-	ret = GetConfigPath(profiles_path, 512, "obs-studio/basic/profiles");
+	ret = GetConfigPath(profiles_path, 512, "ping-studio/basic/profiles");
 	if (ret <= 0)
 		return ret;
 

@@ -193,7 +193,7 @@ static bool RegFilters(bool reg)
 		rf2.rgPins = &AMSPinVideo;
 
 		hr = fm->RegisterFilter(CLSID_OBS_VirtualVideo,
-					L"OBS Virtual Camera", &moniker,
+					L"Ping Virtual Camera", &moniker,
 					&CLSID_VideoInputDeviceCategory,
 					nullptr, &rf2);
 		if (FAILED(hr)) {
