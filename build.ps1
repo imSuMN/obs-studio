@@ -9,12 +9,20 @@ Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x86.zip') -Destina
 Expand-Archive -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x64.zip') -DestinationPath x64 -Force
 Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.dll' -Destination '.\x64\data\obs-plugins\win-dshow'
 If (Test-Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb') {
-	Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb' -Destination '.\x64\data\obs-plugins\win-dshow'
+	Copy-Item -Path '.\x86\data\obs-plugins\win-dshow\obs-virtualcam-module32.pdb' -Destination '.\x64\data\obs-plugins\win-dshow' -Force
 }
 Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.dll' -Destination '.\x86\data\obs-plugins\win-dshow'
 If (Test-Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb') {
-	Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb' -Destination '.\x86\data\obs-plugins\win-dshow'
+	Copy-Item -Path '.\x64\data\obs-plugins\win-dshow\obs-virtualcam-module64.pdb' -Destination '.\x86\data\obs-plugins\win-dshow' -Force
 }
+If (Test-Path '.\win-x86-virtualcam.zip') {
+	Remove-Item -Path '.\win-x86-virtualcam.zip'
+}
+If (Test-path '.\win-x64-virtualcam.zip') {
+	Remove-Item -Path '.\win-x64-virtualcam.zip'
+}
+Compress-Archive -Path '.\x86\*' -DestinationPath '.\win-x86-virtualcam.zip'
+Compress-Archive -Path '.\x64\*' -DestinationPath '.\win-x64-virtualcam.zip'
 Remove-Item -Path x86 -Recurse
 Remove-Item -Path x64 -Recurse
 Remove-Item -Path (Get-ChildItem -Filter 'OBS-Studio-*-Win-x86.zip')
