@@ -45,25 +45,25 @@ OBSAbout::OBSAbout(QWidget *parent) : QDialog(parent), ui(new Ui::OBSAbout)
 	ui->getInvolved->setTextInteractionFlags(Qt::TextBrowserInteraction);
 	ui->getInvolved->setOpenExternalLinks(true);
 
-	ui->about->setText("<a href='#'>" + QTStr("About") + "</a>");
-	ui->authors->setText("<a href='#'>" + QTStr("About.Authors") + "</a>");
+	// ui->about->setText("<a href='#'>" + QTStr("About") + "</a>");
+	// ui->authors->setText("<a href='#'>" + QTStr("About.Authors") + "</a>");
 	ui->license->setText("<a href='#'>" + QTStr("About.License") + "</a>");
 
 	ui->name->setProperty("themeID", "aboutName");
 	ui->version->setProperty("themeID", "aboutVersion");
-	ui->about->setProperty("themeID", "aboutHLayout");
-	ui->authors->setProperty("themeID", "aboutHLayout");
+	// ui->about->setProperty("themeID", "aboutHLayout");
+	// ui->authors->setProperty("themeID", "aboutHLayout");
 	ui->license->setProperty("themeID", "aboutHLayout");
 	ui->info->setProperty("themeID", "aboutInfo");
 
-	connect(ui->about, SIGNAL(clicked()), this, SLOT(ShowAbout()));
-	connect(ui->authors, SIGNAL(clicked()), this, SLOT(ShowAuthors()));
+	// connect(ui->about, SIGNAL(clicked()), this, SLOT(ShowAbout()));
+	// connect(ui->authors, SIGNAL(clicked()), this, SLOT(ShowAuthors()));
 	connect(ui->license, SIGNAL(clicked()), this, SLOT(ShowLicense()));
 
 	QPointer<OBSAbout> about(this);
 
 	OBSBasic *main = OBSBasic::Get();
-	if (main->patronJson.empty() && !main->patronJsonThread) {
+	/* if (main->patronJson.empty() && !main->patronJsonThread) {
 		RemoteTextThread *thread = new RemoteTextThread(
 			"https://obsproject.com/patreon/about-box.json",
 			"application/json");
@@ -77,7 +77,8 @@ OBSAbout::OBSAbout(QWidget *parent) : QDialog(parent), ui(new Ui::OBSAbout)
 		thread->start();
 	} else {
 		ShowAbout();
-	}
+	} */
+	ShowLicense();
 }
 
 void OBSAbout::ShowAbout()

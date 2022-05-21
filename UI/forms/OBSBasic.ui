@@ -505,8 +505,8 @@
       <string>Basic.MainMenu.Help.Logs</string>
      </property>
      <addaction name="actionShowLogs"/>
-     <addaction name="actionUploadCurrentLog"/>
-     <addaction name="actionUploadLastLog"/>
+     <!-- <addaction name="actionUploadCurrentLog"/>
+     <addaction name="actionUploadLastLog"/> -->
      <addaction name="actionViewCurrentLog"/>
     </widget>
     <widget class="QMenu" name="menuCrashLogs">
@@ -514,16 +514,16 @@
       <string>Basic.MainMenu.Help.CrashLogs</string>
      </property>
      <addaction name="actionShowCrashLogs"/>
-     <addaction name="actionUploadLastCrashLog"/>
+     <!-- <addaction name="actionUploadLastCrashLog"/> -->
     </widget>
-    <addaction name="actionHelpPortal"/>
+    <!-- <addaction name="actionHelpPortal"/> -->
     <addaction name="actionWebsite"/>
     <addaction name="actionDiscord"/>
     <addaction name="separator"/>
     <addaction name="menuLogFiles"/>
     <addaction name="menuCrashLogs"/>
     <addaction name="separator"/>
-    <addaction name="actionCheckForUpdates"/>
+    <!-- <addaction name="actionCheckForUpdates"/> -->
     <addaction name="actionShowAbout"/>
     <addaction name="separator"/>
    </widget>
