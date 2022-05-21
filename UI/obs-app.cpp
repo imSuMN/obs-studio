@@ -1463,7 +1463,7 @@ bool OBSApp::OBSInit()
 #ifdef _WIN32
 	bool hideFromCapture = config_get_bool(globalConfig, "BasicWindow",
 					       "HideOBSWindowsFromCapture");
-	blog(LOG_INFO, "Hide OBS windows from screen capture: %s",
+	blog(LOG_INFO, "Hide Ping Studio windows from screen capture: %s",
 	     hideFromCapture ? "true" : "false");
 #endif
 
@@ -2140,13 +2140,13 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 
 		if (multi) {
 			blog(LOG_INFO, "User enabled --multi flag and is now "
-				       "running multiple instances of OBS.");
+				       "running multiple instances of Ping Studio.");
 		} else {
 			blog(LOG_WARNING, "================================");
-			blog(LOG_WARNING, "Warning: OBS is already running!");
+			blog(LOG_WARNING, "Warning: Ping Studio is already running!");
 			blog(LOG_WARNING, "================================");
 			blog(LOG_WARNING, "User is now running multiple "
-					  "instances of OBS!");
+					  "instances of Ping Studio!");
 		}
 
 		/* --------------------------------------- */
@@ -2230,7 +2230,7 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 #ifdef _WIN32
 
 #define CRASH_MESSAGE                                                      \
-	"Woops, OBS has crashed!\n\nWould you like to copy the crash log " \
+	"Woops, Ping Studio has crashed!\n\nWould you like to copy the crash log " \
 	"to the clipboard? The crash log will still be saved to:\n\n%s"
 
 static void main_crash_handler(const char *format, va_list args, void *param)
@@ -2892,9 +2892,9 @@ int main(int argc, char *argv[])
 	if (!portable_mode) {
 		portable_mode =
 			os_file_exists(BASE_PATH "/portable_mode") ||
-			os_file_exists(BASE_PATH "/obs_portable_mode") ||
+			os_file_exists(BASE_PATH "/pch_portable_mode") ||
 			os_file_exists(BASE_PATH "/portable_mode.txt") ||
-			os_file_exists(BASE_PATH "/obs_portable_mode.txt");
+			os_file_exists(BASE_PATH "/pch_portable_mode.txt");
 	}
 
 	if (!opt_disable_updater) {

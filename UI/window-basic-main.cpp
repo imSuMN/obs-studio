@@ -4405,7 +4405,7 @@ int OBSBasic::ResetVideo()
 		/* Try OpenGL if DirectX fails on windows */
 		if (astrcmpi(ovi.graphics_module, DL_OPENGL) != 0) {
 			blog(LOG_WARNING,
-			     "Failed to initialize obs video (%d) "
+			     "Failed to initialize Ping Studio video (%d) "
 			     "with graphics_module='%s', retrying "
 			     "with graphics_module='%s'",
 			     ret, ovi.graphics_module, DL_OPENGL);

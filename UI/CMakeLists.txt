@@ -26,6 +26,7 @@ if(TARGET obs-browser
     obs-browser-panels INTERFACE ${CMAKE_SOURCE_DIR}/plugins/obs-browser/panel)
 endif()
 
+# TODO-PING: Change or disable?
 set(OAUTH_BASE_URL
     "https://auth.obsproject.com/"
     CACHE STRING "Default OAuth base URL")
