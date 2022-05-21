@@ -258,7 +258,7 @@ OBSBasic::OBSBasic(QWidget *parent)
 	ui->setupUi(this);
 	ui->previewDisabledWidget->setVisible(false);
 	ui->contextContainer->setStyle(new OBSContextBarProxyStyle);
-	ui->broadcastButton->setVisible(false);
+	// ui->broadcastButton->setVisible(false);
 
 	startingDockLayout = saveState();
 
@@ -476,8 +476,8 @@ OBSBasic::OBSBasic(QWidget *parent)
 	connect(ui->scenes, SIGNAL(scenesReordered()), this,
 		SLOT(ScenesReordered()));
 
-	connect(ui->broadcastButton, &QPushButton::clicked, this,
-		&OBSBasic::BroadcastButtonClicked);
+	/* connect(ui->broadcastButton, &QPushButton::clicked, this,
+		&OBSBasic::BroadcastButtonClicked); */
 
 	UpdatePreviewSafeAreas();
 }
@@ -2391,7 +2391,7 @@ void OBSBasic::CreateHotkeys()
 		return false;                                              \
 	}
 
-	streamingHotkeys = obs_hotkey_pair_register_frontend(
+	/* streamingHotkeys = obs_hotkey_pair_register_frontend(
 		"OBSBasic.StartStreaming", Str("Basic.Main.StartStreaming"),
 		"OBSBasic.StopStreaming", Str("Basic.Main.StopStreaming"),
 		MAKE_CALLBACK(!basic.outputHandler->StreamingActive() &&
@@ -2402,7 +2402,7 @@ void OBSBasic::CreateHotkeys()
 			      basic.StopStreaming, "Stopping stream"),
 		this, this);
 	LoadHotkeyPair(streamingHotkeys, "OBSBasic.StartStreaming",
-		       "OBSBasic.StopStreaming");
+		       "OBSBasic.StopStreaming"); */
 
 	auto cb = [](void *data, obs_hotkey_id, obs_hotkey_t *, bool pressed) {
 		OBSBasic &basic = *static_cast<OBSBasic *>(data);
@@ -6339,12 +6339,12 @@ void OBSBasic::DisplayStreamStartError()
 	QString message = !outputHandler->lastError.empty()
 				  ? QTStr(outputHandler->lastError.c_str())
 				  : QTStr("Output.StartFailedGeneric");
-	ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
-	ui->streamButton->setEnabled(true);
-	ui->streamButton->setChecked(false);
+	// ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
+	// ui->streamButton->setEnabled(true);
+	// ui->streamButton->setChecked(false);
 
 	if (sysTrayStream) {
-		sysTrayStream->setText(ui->streamButton->text());
+		// sysTrayStream->setText(ui->streamButton->text());
 		sysTrayStream->setEnabled(true);
 	}
 
@@ -6467,7 +6467,7 @@ void OBSBasic::StartStreaming()
 
 	if (auth && auth->broadcastFlow()) {
 		if (!broadcastActive && !broadcastReady) {
-			ui->streamButton->setChecked(false);
+			// ui->streamButton->setChecked(false);
 
 			QMessageBox no_broadcast(this);
 			no_broadcast.setText(QTStr("Output.NoBroadcast.Text"));
@@ -6499,14 +6499,14 @@ void OBSBasic::StartStreaming()
 
 	SaveProject();
 
-	ui->streamButton->setEnabled(false);
-	ui->streamButton->setChecked(false);
-	ui->streamButton->setText(QTStr("Basic.Main.Connecting"));
-	ui->broadcastButton->setChecked(false);
+	// ui->streamButton->setEnabled(false);
+	// ui->streamButton->setChecked(false);
+	// ui->streamButton->setText(QTStr("Basic.Main.Connecting"));
+	// ui->broadcastButton->setChecked(false);
 
 	if (sysTrayStream) {
 		sysTrayStream->setEnabled(false);
-		sysTrayStream->setText(ui->streamButton->text());
+		// sysTrayStream->setText(ui->streamButton->text());
 	}
 
 	if (!outputHandler->StartStreaming(service)) {
@@ -6515,15 +6515,15 @@ void OBSBasic::StartStreaming()
 	}
 
 	if (!autoStartBroadcast) {
-		ui->broadcastButton->setText(
+		/* ui->broadcastButton->setText(
 			QTStr("Basic.Main.StartBroadcast"));
 		ui->broadcastButton->setProperty("broadcastState", "ready");
 		ui->broadcastButton->style()->unpolish(ui->broadcastButton);
 		ui->broadcastButton->style()->polish(ui->broadcastButton);
 		// well, we need to disable button while stream is not active
-		ui->broadcastButton->setEnabled(false);
+		ui->broadcastButton->setEnabled(false); */
 	} else {
-		if (!autoStopBroadcast) {
+		/* if (!autoStopBroadcast) {
 			ui->broadcastButton->setText(
 				QTStr("Basic.Main.StopBroadcast"));
 		} else {
@@ -6533,7 +6533,7 @@ void OBSBasic::StartStreaming()
 		}
 		ui->broadcastButton->setProperty("broadcastState", "active");
 		ui->broadcastButton->style()->unpolish(ui->broadcastButton);
-		ui->broadcastButton->style()->polish(ui->broadcastButton);
+		ui->broadcastButton->style()->polish(ui->broadcastButton); */
 		broadcastActive = true;
 	}
 
@@ -6558,8 +6558,8 @@ void OBSBasic::BroadcastButtonClicked()
 	if (!broadcastReady ||
 	    (!broadcastActive && !outputHandler->StreamingActive())) {
 		SetupBroadcast();
-		if (broadcastReady)
-			ui->broadcastButton->setChecked(true);
+		/* if (broadcastReady)
+			ui->broadcastButton->setChecked(true); */
 		return;
 	}
 
@@ -6591,7 +6591,7 @@ void OBSBasic::BroadcastButtonClicked()
 		broadcastActive = true;
 		autoStartBroadcast = true; // and clear the flag
 
-		if (!autoStopBroadcast) {
+		/* if (!autoStopBroadcast) {
 			ui->broadcastButton->setText(
 				QTStr("Basic.Main.StopBroadcast"));
 		} else {
@@ -6602,7 +6602,7 @@ void OBSBasic::BroadcastButtonClicked()
 
 		ui->broadcastButton->setProperty("broadcastState", "active");
 		ui->broadcastButton->style()->unpolish(ui->broadcastButton);
-		ui->broadcastButton->style()->polish(ui->broadcastButton);
+		ui->broadcastButton->style()->polish(ui->broadcastButton); */
 	} else if (!autoStopBroadcast) {
 #if YOUTUBE_ENABLED
 		bool confirm = config_get_bool(GetGlobalConfig(), "BasicWindow",
@@ -6652,13 +6652,13 @@ void OBSBasic::BroadcastButtonClicked()
 
 void OBSBasic::SetBroadcastFlowEnabled(bool enabled)
 {
-	ui->broadcastButton->setEnabled(enabled);
+	/* ui->broadcastButton->setEnabled(enabled);
 	ui->broadcastButton->setVisible(enabled);
 	ui->broadcastButton->setChecked(broadcastReady);
 	ui->broadcastButton->setProperty("broadcastState", "idle");
 	ui->broadcastButton->style()->unpolish(ui->broadcastButton);
 	ui->broadcastButton->style()->polish(ui->broadcastButton);
-	ui->broadcastButton->setText(QTStr("Basic.Main.SetupBroadcast"));
+	ui->broadcastButton->setText(QTStr("Basic.Main.SetupBroadcast")); */
 }
 
 void OBSBasic::SetupBroadcast()
@@ -6863,12 +6863,12 @@ void OBSBasic::ForceStopStreaming()
 
 void OBSBasic::StreamDelayStarting(int sec)
 {
-	ui->streamButton->setText(QTStr("Basic.Main.StopStreaming"));
-	ui->streamButton->setEnabled(true);
-	ui->streamButton->setChecked(true);
+	// ui->streamButton->setText(QTStr("Basic.Main.StopStreaming"));
+	// ui->streamButton->setEnabled(true);
+	// ui->streamButton->setChecked(true);
 
 	if (sysTrayStream) {
-		sysTrayStream->setText(ui->streamButton->text());
+		// sysTrayStream->setText(ui->streamButton->text());
 		sysTrayStream->setEnabled(true);
 	}
 
@@ -6880,7 +6880,7 @@ void OBSBasic::StreamDelayStarting(int sec)
 				   SLOT(StopStreaming()));
 	startStreamMenu->addAction(QTStr("Basic.Main.ForceStopStreaming"), this,
 				   SLOT(ForceStopStreaming()));
-	ui->streamButton->setMenu(startStreamMenu);
+	// ui->streamButton->setMenu(startStreamMenu);
 
 	ui->statusbar->StreamDelayStarting(sec);
 
@@ -6889,12 +6889,12 @@ void OBSBasic::StreamDelayStarting(int sec)
 
 void OBSBasic::StreamDelayStopping(int sec)
 {
-	ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
-	ui->streamButton->setEnabled(true);
-	ui->streamButton->setChecked(false);
+	// ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
+	// ui->streamButton->setEnabled(true);
+	// ui->streamButton->setChecked(false);
 
 	if (sysTrayStream) {
-		sysTrayStream->setText(ui->streamButton->text());
+		// sysTrayStream->setText(ui->streamButton->text());
 		sysTrayStream->setEnabled(true);
 	}
 
@@ -6906,7 +6906,7 @@ void OBSBasic::StreamDelayStopping(int sec)
 				   SLOT(StartStreaming()));
 	startStreamMenu->addAction(QTStr("Basic.Main.ForceStopStreaming"), this,
 				   SLOT(ForceStopStreaming()));
-	ui->streamButton->setMenu(startStreamMenu);
+	// ui->streamButton->setMenu(startStreamMenu);
 
 	ui->statusbar->StreamDelayStopping(sec);
 
@@ -6916,13 +6916,13 @@ void OBSBasic::StreamDelayStopping(int sec)
 
 void OBSBasic::StreamingStart()
 {
-	ui->streamButton->setText(QTStr("Basic.Main.StopStreaming"));
-	ui->streamButton->setEnabled(true);
-	ui->streamButton->setChecked(true);
+	// ui->streamButton->setText(QTStr("Basic.Main.StopStreaming"));
+	// ui->streamButton->setEnabled(true);
+	// ui->streamButton->setChecked(true);
 	ui->statusbar->StreamStarted(outputHandler->streamOutput);
 
 	if (sysTrayStream) {
-		sysTrayStream->setText(ui->streamButton->text());
+		// sysTrayStream->setText(ui->streamButton->text());
 		sysTrayStream->setEnabled(true);
 	}
 
@@ -6953,10 +6953,10 @@ void OBSBasic::StreamingStart()
 
 void OBSBasic::StreamStopping()
 {
-	ui->streamButton->setText(QTStr("Basic.Main.StoppingStreaming"));
+	// ui->streamButton->setText(QTStr("Basic.Main.StoppingStreaming"));
 
-	if (sysTrayStream)
-		sysTrayStream->setText(ui->streamButton->text());
+	/* if (sysTrayStream)
+		sysTrayStream->setText(ui->streamButton->text()); */
 
 	streamingStopping = true;
 	if (api)
@@ -7009,12 +7009,12 @@ void OBSBasic::StreamingStop(int code, QString last_error)
 
 	ui->statusbar->StreamStopped();
 
-	ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
-	ui->streamButton->setEnabled(true);
-	ui->streamButton->setChecked(false);
+	// ui->streamButton->setText(QTStr("Basic.Main.StartStreaming"));
+	// ui->streamButton->setEnabled(true);
+	// ui->streamButton->setChecked(false);
 
 	if (sysTrayStream) {
-		sysTrayStream->setText(ui->streamButton->text());
+		// sysTrayStream->setText(ui->streamButton->text());
 		sysTrayStream->setEnabled(true);
 	}
 
@@ -7046,7 +7046,7 @@ void OBSBasic::StreamingStop(int code, QString last_error)
 	}
 
 	if (!startStreamMenu.isNull()) {
-		ui->streamButton->setMenu(nullptr);
+		// ui->streamButton->setMenu(nullptr);
 		startStreamMenu->deleteLater();
 		startStreamMenu = nullptr;
 	}
@@ -7541,7 +7541,7 @@ void OBSBasic::on_streamButton_clicked()
 					QMessageBox::No);
 
 			if (button == QMessageBox::No) {
-				ui->streamButton->setChecked(true);
+				// ui->streamButton->setChecked(true);
 				return;
 			}
 		}
@@ -7549,7 +7549,7 @@ void OBSBasic::on_streamButton_clicked()
 		StopStreaming();
 	} else {
 		if (!UIValidation::NoSourcesConfirmation(this)) {
-			ui->streamButton->setChecked(false);
+			// ui->streamButton->setChecked(false);
 			return;
 		}
 
@@ -7565,10 +7565,10 @@ void OBSBasic::on_streamButton_clicked()
 			break;
 		case StreamSettingsAction::OpenSettings:
 			on_action_Settings_triggered();
-			ui->streamButton->setChecked(false);
+			// ui->streamButton->setChecked(false);
 			return;
 		case StreamSettingsAction::Cancel:
-			ui->streamButton->setChecked(false);
+			// ui->streamButton->setChecked(false);
 			return;
 		}
 
@@ -7594,7 +7594,7 @@ void OBSBasic::on_streamButton_clicked()
 					QTStr("ConfirmBWTest.Text"));
 
 			if (button == QMessageBox::No) {
-				ui->streamButton->setChecked(false);
+				// ui->streamButton->setChecked(false);
 				return;
 			}
 		} else if (confirm && isVisible()) {
@@ -7606,7 +7606,7 @@ void OBSBasic::on_streamButton_clicked()
 					QMessageBox::No);
 
 			if (button == QMessageBox::No) {
-				ui->streamButton->setChecked(false);
+				// ui->streamButton->setChecked(false);
 				return;
 			}
 		}
