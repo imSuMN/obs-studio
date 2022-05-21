@@ -76,7 +76,7 @@
        <item>
         <widget class="QLabel" name="name">
          <property name="text">
-          <string notr="true">OBS Studio</string>
+          <string notr="true">Ping Studio</string>
          </property>
         </widget>
        </item>
@@ -172,7 +172,7 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item>
+      <!-- <item>
        <widget class="ClickableLabel" name="about">
         <property name="text">
          <string>About</string>
@@ -191,7 +191,7 @@
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
-      </item>
+      </item> -->
       <item>
        <widget class="ClickableLabel" name="license">
         <property name="text">

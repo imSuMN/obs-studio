@@ -58,10 +58,10 @@ static inline bool check_path(const char *data, const char *path,
 
 bool GetDataFilePath(const char *data, string &output)
 {
-	if (check_path(data, "data/obs-studio/", output))
+	if (check_path(data, "data/ping-studio/", output))
 		return true;
 
-	return check_path(data, OBS_DATA_PATH "/obs-studio/", output);
+	return check_path(data, OBS_DATA_PATH "/ping-studio/", output);
 }
 
 string GetDefaultVideoSavePath()
@@ -333,7 +333,7 @@ RunOnceMutex CheckIfAlreadyRunning(bool &already_running)
 	string name;
 
 	if (!portable_mode) {
-		name = "OBSStudioCore";
+		name = "PingStudioCore";
 	} else {
 		char path[500];
 		char absPath[512];
@@ -341,7 +341,7 @@ RunOnceMutex CheckIfAlreadyRunning(bool &already_running)
 		*absPath = 0;
 		GetConfigPath(path, sizeof(path), "");
 		os_get_abs_path(path, absPath, sizeof(absPath));
-		name = "OBSStudioPortable";
+		name = "PingStudioPortable";
 		name += absPath;
 	}
 

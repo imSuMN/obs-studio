@@ -26,6 +26,7 @@ if(TARGET obs-browser
     obs-browser-panels INTERFACE ${CMAKE_SOURCE_DIR}/plugins/obs-browser/panel)
 endif()
 
+# TODO-PING: Change or disable?
 set(OAUTH_BASE_URL
     "https://auth.obsproject.com/"
     CACHE STRING "Default OAuth base URL")
@@ -332,7 +333,7 @@ endif()
 
 if(OS_WINDOWS)
   set_target_properties(obs PROPERTIES WIN32_EXECUTABLE ON OUTPUT_NAME
-                                                           "obs${_ARCH_SUFFIX}")
+                                                           "pch${_ARCH_SUFFIX}")
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/obs.rc.in
                  ${CMAKE_BINARY_DIR}/obs.rc)

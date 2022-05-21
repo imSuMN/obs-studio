@@ -38,7 +38,7 @@ OBSCrashReport::OBSCrashReport(QWidget *parent, const char *text)
 			 SLOT(ExitClicked()));
 
 	resize(800, 600);
-	setWindowTitle("Oops, OBS has crashed!");
+	setWindowTitle("Oops, Ping Studio has crashed!");
 }
 
 void OBSCrashReport::ExitClicked()
