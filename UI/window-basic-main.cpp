@@ -3658,6 +3658,7 @@ void trigger_sparkle_update();
 
 void OBSBasic::TimedCheckForUpdates()
 {
+	return;
 	if (App()->IsUpdaterDisabled())
 		return;
 	if (!config_get_bool(App()->GlobalConfig(), "General",
