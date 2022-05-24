@@ -10,6 +10,7 @@ import zipfile
 from io import BytesIO
 from random import randbytes
 from urllib.parse import urlparse
+from collections import defaultdict
 
 MINIMUM_PURGE_AGE = 9.75 * 24 * 60 * 60  # slightly less than 10 days
 TIMEOUT = 10
@@ -17,6 +18,42 @@ SKIPPED_SERVICES = {'YouNow', 'SHOWROOM', 'Dacast'}
 SERVICES_FILE = 'plugins/rtmp-services/data/services.json'
 PACKAGE_FILE = 'plugins/rtmp-services/data/package.json'
 CACHE_FILE = 'other/timestamps.json'
+
+DO_NOT_PING = {'jp9000'}
+PR_MESSAGE = '''This is an automatically created pull request to remove unresponsive servers and services.
+
+| Service | Action Taken | Author(s) |
+| ------- | ------------ | --------- |
+{table}
+
+If you are not responsible for an affected service and want to be excluded from future pings please let us know.
+
+Created by workflow run: https://github.com/{repository}/actions/runs/{run_id}'''
+
+# GQL is great isn't it
+GQL_QUERY = '''{
+  repositoryOwner(login: "obsproject") {
+    repository(name: "obs-studio") {
+      object(expression: "master") {
+        ... on Commit {
+          blame(path: "plugins/rtmp-services/data/services.json") {
+            ranges {
+              startingLine
+              endingLine
+              commit {
+                author {
+                  user {
+                    login
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}'''
 
 context = ssl.create_default_context()
 
@@ -123,10 +160,42 @@ def get_last_artifact():
                 return json.loads(zip_ref.read(info.filename))
 
 
+def find_people_to_blame(raw_services: str, servers: list[tuple[str, str]]) -> dict():
+    if not servers:
+        return dict()
+
+    # Fetch Blame data from github
+    s = requests.session()
+    s.headers['Authorization'] = f'Bearer {os.environ["GITHUB_TOKEN"]}'
+
+    r = s.post('https://api.github.com/graphql', json=dict(query=GQL_QUERY, variables=dict()))
+    r.raise_for_status()
+    j = r.json()
+
+    # The file is only ~2600 lines so this isn't too crazy and makes the lookup very easy
+    line_author = dict()
+    for blame in j['data']['repositoryOwner']['repository']['object']['blame']['ranges']:
+        for i in range(blame['startingLine'] - 1, blame['endingLine']):
+            if user := blame['commit']['author']['user']:
+                line_author[i] = user['login']
+
+    service_authors = defaultdict(set)
+    for i, line in enumerate(raw_services.splitlines()):
+        if '"url":' not in line:
+            continue
+        for server, service in servers:
+            if server in line and (author := line_author.get(i)):
+                if author not in DO_NOT_PING:
+                    service_authors[service].add(author)
+
+    return service_authors
+
+
 def main():
     try:
         with open(SERVICES_FILE, encoding='utf-8') as services_file:
-            services = json.load(services_file)
+            raw_services = services_file.read()
+            services = json.loads(raw_services)
         with open(PACKAGE_FILE, encoding='utf-8') as package_file:
             package = json.load(package_file)
     except OSError as e:
@@ -152,7 +221,8 @@ def main():
         print('Successfully loaded cache file:', CACHE_FILE)
 
     start_time = int(time.time())
-    removed_something = False
+    affected_services = dict()
+    removed_servers = list()
 
     # create temporary new list
     new_services = services.copy()
@@ -190,6 +260,7 @@ def main():
                             f'🗑️ Purging server "{server["url"]}", it has been '
                             f'unresponsive for {round(delta/60/60/24)} days.'
                         )
+                        removed_servers.append((server['url'], service['name']))
                         # continuing here means not adding it to the new list, thus dropping it
                         continue
                 else:
@@ -204,11 +275,12 @@ def main():
 
         if (diff := len(service['servers']) - len(new_service['servers'])) > 0:
             print(f'ℹ️ Removed {diff} server(s) from {service["name"]}')
-            removed_something = True
+            affected_services[service['name']] = f'{diff} servers removed'
 
         # remove services with no valid servers
         if not new_service['servers']:
             print(f'💀 Service "{service["name"]}" has no valid servers left, removing!')
+            affected_services[service['name']] = f'Service removed'
             continue
 
         new_services['services'].append(new_service)
@@ -224,7 +296,7 @@ def main():
     else:
         print('Successfully wrote cache file:', CACHE_FILE)
 
-    if removed_something:
+    if removed_servers:
         # increment package version and save that as well
         package['version'] += 1
         package['files'][0]['version'] += 1
@@ -242,6 +314,31 @@ def main():
             return 1
         else:
             print(f'Successfully wrote services/package files:\n- {SERVICES_FILE}\n- {PACKAGE_FILE}')
+
+        # try to find authors to ping, this is optional and is allowed to fail
+        try:
+            service_authors = find_people_to_blame(raw_services, removed_servers)
+        except Exception as e:
+            print(f'⚠ Could not fetch blame for some reason: {e}')
+            service_authors = dict()
+
+        # set GitHub outputs
+        print(f'::set-output name=make_pr::true')
+        msg = PR_MESSAGE.format(
+            repository=os.environ['REPOSITORY'],
+            run_id=os.environ['WORKFLOW_RUN_ID'],
+            table='\n'.join(
+                '| {name} | {action} | {authors} |'.format(
+                    name=name.replace('|', '\\|'),
+                    action=action,
+                    authors=', '.join(f'@{author}' for author in sorted(service_authors.get(name, []))),
+                )
+                for name, action in sorted(affected_services.items())
+            ),
+        )
+        print(f'::set-output name=pr_message::{json.dumps(msg)}')
+    else:
+        print(f'::set-output name=make_pr::false')
 
 
 if __name__ == '__main__':
