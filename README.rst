@@ -1,11 +1,11 @@
 Ping Studio <https://ping.gg>
 ===================================
 
-.. image:: https://github.com/ping.gg/obs-studio/actions/workflows/main.yml/badge.svg?branch=ping-main&event=push
+.. image:: https://github.com/pingdotgg/obs-studio/actions/workflows/main.yml/badge.svg?branch=ping-main&event=push
    :alt: Ping Studio Build Status - GitHub Actions
-   :target: https://github.com/obsproject/obs-studio/actions/workflows/main.yml?query=event%3Apush+branch%3Aping-main
+   :target: https://github.com/pingdotgg/obs-studio/actions/workflows/main.yml?query=event%3Apush+branch%3Aping-main
 
-.. image:: https://img.shields.io/discord/348973006581923840.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2
+.. image:: https://img.shields.io/discord/853396660331085824.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2
    :alt: Ping Labs Discord Server
    :target: https://ping.gg/discord
 
