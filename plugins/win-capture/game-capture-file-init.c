@@ -203,7 +203,7 @@ static bool update_hook_file(bool b64)
 	get_programdata_path(temp, L"ping-studio-hook\\");
 	StringCbCopyW(dst_json, sizeof(dst_json), temp);
 	StringCbCopyW(dst, sizeof(dst), temp);
-	make_filename(dst_json, L"obs-vulkan", L".json");
+	make_filename(dst_json, L"ping-vulkan", L".json");
 	make_filename(dst, L"graphics-hook", L".dll");
 
 	if (!file_exists(src)) {
@@ -267,7 +267,7 @@ static void init_vulkan_registry(bool b64)
 
 	wchar_t path[MAX_PATH];
 	get_programdata_path(path, L"ping-studio-hook\\");
-	make_filename(path, L"obs-vulkan", L".json");
+	make_filename(path, L"ping-vulkan", L".json");
 
 	s = get_reg(HKEY_LOCAL_MACHINE, IMPLICIT_LAYERS, path, b64);
 
