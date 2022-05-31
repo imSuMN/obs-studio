@@ -165,7 +165,7 @@ static bool RegServers(bool reg)
 	}
 
 	if (reg) {
-		return RegServer(CLSID_OBS_VirtualVideo, L"OBS Virtual Camera",
+		return RegServer(CLSID_OBS_VirtualVideo, L"Ping Virtual Camera",
 				 file);
 	} else {
 		return UnregServer(CLSID_OBS_VirtualVideo);
